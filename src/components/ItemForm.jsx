@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
+import { useTodo } from '../store/todoStore'
 
-function ItemForm({ onSubmit, initialData, onCancel }) {
+function ItemForm({ initialData, onCancel }) {
+  const { addOrUpdate } = useTodo()
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -24,19 +26,19 @@ function ItemForm({ onSubmit, initialData, onCancel }) {
       alert('Заполни обязательно title и date')
       return
     }
-    onSubmit(formData)
+    addOrUpdate(formData)
     if (!initialData) setFormData({ title: '', description: '', date: '', isConfirmed: false })
   }
 
   return (
     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '30px', padding: '15px', background: '#f9f9f9', borderRadius: '8px' }}>
-      <h2>{initialData ? 'Редактирование' : 'Новый объект'}</h2>
-      <input name="title" placeholder="Title" value={formData.title} onChange={handleChange} required style={{ padding: '8px', fontSize: '14px' }} />
-      <input name="description" placeholder="Description" value={formData.description} onChange={handleChange} style={{ padding: '8px', fontSize: '14px' }} />
+      <h2>{initialData ? 'Редактирование' : 'Новая задача'}</h2>
+      <input name="title" placeholder="Заголовок" value={formData.title} onChange={handleChange} required style={{ padding: '8px', fontSize: '14px' }} />
+      <input name="description" placeholder="Описание" value={formData.description} onChange={handleChange} style={{ padding: '8px', fontSize: '14px' }} />
       <input type="date" name="date" value={formData.date} onChange={handleChange} required style={{ padding: '8px', fontSize: '14px' }} />
       <label style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '14px' }}>
         <input type="checkbox" name="isConfirmed" checked={formData.isConfirmed} onChange={handleChange} />
-        isConfirmed
+        Выполнено
       </label>
       <div style={{ display: 'flex', gap: '10px' }}>
         <button type="submit" style={{ padding: '10px', background: '#4f46e5', color: '#fff', border: 'none', cursor: 'pointer', fontSize: '14px', flex: 1 }}>

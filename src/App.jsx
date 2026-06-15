@@ -1,30 +1,39 @@
-import { useState } from 'react'
+import { TodoProvider, useTodo } from './store/todoStore'
 import ItemForm from './components/ItemForm'
 import ItemList from './components/ItemList'
 
 function App() {
-  const [items, setItems] = useState([])
-  const [editingItem, setEditingItem] = useState(null)
+  return (
+    <TodoProvider>
+      <TodoApp />
+    </TodoProvider>
+  )
+}
 
-  const handleAddOrUpdate = (data) => {
-    if (editingItem) {
-      setItems(prev => prev.map(item => item.id === editingItem.id ? { ...data, id: editingItem.id } : item))
-      setEditingItem(null)
-    } else {
-      setItems(prev => [...prev, { ...data, id: Date.now() }])
-    }
+function TodoApp() {
+  const { loading, error, editingItem, setEditingItem } = useTodo()
+
+  if (loading) {
+    return (
+      <div style={{ padding: '20px', textAlign: 'center' }}>
+        <h2>Загрузка задач...</h2>
+      </div>
+    )
   }
 
-  const handleEdit = (item) => setEditingItem(item)
-  const handleDelete = (id) => setItems(prev => prev.filter(item => item.id !== id))
-  const handleToggleConfirm = (id) => setItems(prev => prev.map(item => item.id === id ? { ...item, isConfirmed: !item.isConfirmed } : item))
-  const handleCancelEdit = () => setEditingItem(null)
+  if (error) {
+    return (
+      <div style={{ padding: '20px', color: 'red' }}>
+        <h2>Ошибка: {error}</h2>
+      </div>
+    )
+  }
 
   return (
-    <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto', fontFamily: 'Arial, sans-serif', lineHeight: '1.5' }}>
-      <h1 style={{ lineHeight: '1.2', marginBottom: '20px' }}>Управление объектами</h1>
-      <ItemForm onSubmit={handleAddOrUpdate} initialData={editingItem} onCancel={handleCancelEdit} />
-      <ItemList items={items} onEdit={handleEdit} onDelete={handleDelete} onToggleConfirm={handleToggleConfirm} />
+    <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto', fontFamily: 'Arial, sans-serif' }}>
+      <h1 style={{ marginBottom: '20px' }}>Управление задачами</h1>
+      <ItemForm initialData={editingItem} onCancel={() => setEditingItem(null)} />
+      <ItemList />
     </div>
   )
 }
