@@ -2,7 +2,6 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
 const BASE_URL = 'https://jsonplaceholder.typicode.com/todos?_limit=20'
 
-// Асинхронная функция для загрузки данных
 export const fetchTodos = createAsyncThunk('todos/fetch', async () => {
   const res = await fetch(BASE_URL)
   if (!res.ok) throw new Error('Ошибка загрузки')
