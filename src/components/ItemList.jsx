@@ -1,11 +1,11 @@
-import { useTodo } from '../store/todoStore'
+import { useSelector } from 'react-redux'
 import Item from './Item'
 
 function ItemList() {
-  const { items } = useTodo()
-  
-  if (items.length === 0) return <p>Задачи не найдены.</p>
-  
+  const items = useSelector(state => state.todos.items)
+
+  if (items.length === 0) return <p>Нет задач.</p>
+
   return (
     <ul style={{ listStyle: 'none', padding: 0 }}>
       {items.map(item => (

@@ -1,39 +1,44 @@
-import { TodoProvider, useTodo } from './store/todoStore'
+import { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { fetchTodos, setEditItem } from './store/todoSlice'
 import ItemForm from './components/ItemForm'
 import ItemList from './components/ItemList'
+import './App.css'
 
 function App() {
-  return (
-    <TodoProvider>
-      <TodoApp />
-    </TodoProvider>
-  )
-}
+  const dispatch = useDispatch()
+  const { items, status, error, editItem } = useSelector(state => state.todos)
 
-function TodoApp() {
-  const { loading, error, editingItem, setEditingItem } = useTodo()
+  useEffect(() => {
+    dispatch(fetchTodos())
+  }, [dispatch])
 
-  if (loading) {
+  if (status === 'loading') {
     return (
-      <div style={{ padding: '20px', textAlign: 'center' }}>
-        <h2>Загрузка задач...</h2>
+      <div style={{ padding: 20, textAlign: 'center', color: '#fff' }}>
+        Загрузка данных...
       </div>
     )
   }
 
-  if (error) {
+  if (status === 'failed') {
     return (
-      <div style={{ padding: '20px', color: 'red' }}>
-        <h2>Ошибка: {error}</h2>
+      <div style={{ padding: 20, color: 'red', textAlign: 'center' }}>
+        Ошибка: {error}
       </div>
     )
   }
 
   return (
-    <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto', fontFamily: 'Arial, sans-serif' }}>
-      <h1 style={{ marginBottom: '20px' }}>Управление задачами</h1>
-      <ItemForm initialData={editingItem} onCancel={() => setEditingItem(null)} />
-      <ItemList />
+    <div className="app-container">
+      <div className="app-content">
+        <h1>Todo List на Redux</h1>
+        <ItemForm 
+          initialData={editItem} 
+          onCancel={() => dispatch(setEditItem(null))} 
+        />
+        <ItemList />
+      </div>
     </div>
   )
 }
